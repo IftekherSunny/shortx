@@ -1,7 +1,7 @@
 ## Shortx
 
 #### Installation Process
- 
+
 Download shortx, then goto src directury from your terminal and enter the command given below to install all dependencies.
 
 ```
@@ -14,7 +14,7 @@ You can also run shortx from binary file. Enter the command given below to run s
 ./bin/app
 ```
 
-App will run http://localhost:8000
+App will run http://localhost:8888
 
 #### Shortx Configuration
 
