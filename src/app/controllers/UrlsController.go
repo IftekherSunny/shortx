@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"iftekhersunny/configs"
-	"iftekhersunny/http"
-	"iftekhersunny/repositories"
+	"app/http"
+	"app/repositories"
+	"configs"
 	netHttp "net/http"
 
 	"github.com/asaskevich/govalidator"

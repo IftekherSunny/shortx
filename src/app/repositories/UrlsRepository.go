@@ -1,11 +1,11 @@
 package repositories
 
 import (
+	"app/models"
+	"app/types"
+	"app/utils"
+	"configs"
 	"encoding/json"
-	"iftekhersunny/configs"
-	"iftekhersunny/models"
-	"iftekhersunny/types"
-	"iftekhersunny/utils"
 	"io"
 
 	"github.com/jinzhu/gorm"

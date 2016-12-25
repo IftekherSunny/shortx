@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"iftekhersunny/configs"
-	"iftekhersunny/models"
+	"app/models"
+	"configs"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"

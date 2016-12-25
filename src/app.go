@@ -1,7 +1,7 @@
 package main
 
 import (
-	"iftekhersunny/controllers"
+	"app/controllers"
 	"log"
 	"net/http"
 
