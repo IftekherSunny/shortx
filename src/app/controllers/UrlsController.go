@@ -7,7 +7,7 @@ import (
 	netHttp "net/http"
 
 	"github.com/asaskevich/govalidator"
-	httpclient "github.com/ddliu/go-httpclient"
+	httpClient "github.com/ddliu/go-httpclient"
 	"github.com/gorilla/mux"
 )
 
@@ -19,20 +19,28 @@ type UrlsController struct {
 // Index method
 func (urlsController *UrlsController) Index(writer netHttp.ResponseWriter, request *netHttp.Request) {
 
+	// validating api token
+	apiToken := request.URL.Query()["api_token"][0]
+
+	if apiToken != configs.API_KEY {
+		http.Response(writer, netHttp.StatusUnauthorized, map[string]string{"message": "Unauthorized access"})
+		return
+	}
+
 	// get long urls from request.body
 	UrlsRepository := repositories.UrlsRepository{}
 	Urls := UrlsRepository.GetLongUrls(request.Body)
 
 	// validate urls
-	for _, urls := range Urls.LongUrls {
-		if !govalidator.IsURL(urls.LongUrl) {
-			http.Response(writer, netHttp.StatusUnprocessableEntity, "The url [ "+urls.LongUrl+" ] is not a valid url")
+	for longUrl, _ := range Urls {
+		if !govalidator.IsURL(longUrl) {
+			http.Response(writer, netHttp.StatusUnprocessableEntity, "The url [ "+longUrl+" ] is not a valid url")
 			return
 		}
 	}
 
 	// Generate and serve short urls
-	ShortUrls := UrlsRepository.GenerateShortUrls(Urls)
+	ShortUrls := UrlsRepository.GenerateShortUrls(Urls, request)
 
 	http.Response(writer, netHttp.StatusOK, ShortUrls)
 }
@@ -55,15 +63,17 @@ func (urlsController *UrlsController) RedirectToLongUrl(writer netHttp.ResponseW
 	}
 
 	// post a request to mailscout server for saving link clicked tracking information
-	res, _ := httpclient.Post(configs.MAILSCOUT_WEBHOOK_LINK+broadcastId+"/"+subscriberEmail, map[string]string{
+	res, _ := httpClient.Post(configs.MAILSCOUT_WEBHOOK+broadcastId+"/"+subscriberEmail, map[string]string{
 		"long_url": longUrl,
 	})
 
-	if res.StatusCode == netHttp.StatusOK {
+	// if mailscout server return 201 status code then redirect to long url
+	if res.StatusCode == 201 {
 		netHttp.Redirect(writer, request, longUrl, netHttp.StatusMovedPermanently)
 		return
 	}
 
+	// if mailscout server return without 201 status code
 	http.Response(writer, netHttp.StatusNotFound, "The given short url is not found")
 	return
 }

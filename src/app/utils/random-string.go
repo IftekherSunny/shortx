@@ -1,13 +1,9 @@
 package utils
 
-import (
-	"math/rand"
-	"time"
-)
+import "math/rand"
 
 // Random string generator
 func RandomString(strlen int) string {
-	rand.Seed(time.Now().UTC().UnixNano())
 	const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTYVWXYZ0123456789"
 	result := make([]byte, strlen)
 	for i := 0; i < strlen; i++ {

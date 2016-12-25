@@ -2,11 +2,11 @@ package repositories
 
 import (
 	"app/models"
-	"app/types"
 	"app/utils"
 	"configs"
 	"encoding/json"
 	"io"
+	"net/http"
 
 	"github.com/jinzhu/gorm"
 )
@@ -17,11 +17,11 @@ type UrlsRepository struct {
 }
 
 // Get long urls from given data
-func (urlsRepository *UrlsRepository) GetLongUrls(body io.ReadCloser) types.Urls {
+func (urlsRepository *UrlsRepository) GetLongUrls(body io.ReadCloser) map[string]string {
 
 	decoder := json.NewDecoder(body)
 
-	urls := types.Urls{}
+	var urls map[string]map[string]string
 
 	err := decoder.Decode(&urls)
 
@@ -29,20 +29,20 @@ func (urlsRepository *UrlsRepository) GetLongUrls(body io.ReadCloser) types.Urls
 		panic(err)
 	}
 
-	return urls
+	return urls["long_urls"]
 }
 
 // Generate short urls from the given long urls
-func (urlsRepository *UrlsRepository) GenerateShortUrls(Urls types.Urls) types.Urls {
+func (urlsRepository *UrlsRepository) GenerateShortUrls(Urls map[string]string, request *http.Request) map[string]string {
 	db := DbRepository{}.init()
 
-	for key, urls := range Urls.LongUrls {
-		shortUrlExist, shortUrl := urlsRepository.shortUrlExist(db, urls.LongUrl)
+	for longUrl, _ := range Urls {
+		shortUrlExist, shortUrl := urlsRepository.shortUrlExist(db, longUrl)
 
 		if shortUrlExist {
-			Urls.LongUrls[key].ShortUrl = shortUrl
+			Urls[longUrl] = "http://" + request.Host + "/" + shortUrl
 		} else {
-			Urls.LongUrls[key].ShortUrl = urlsRepository.generateShortUrl(db, urls.LongUrl)
+			Urls[longUrl] = "http://" + request.Host + "/" + urlsRepository.generateShortUrl(db, longUrl)
 		}
 	}
 
