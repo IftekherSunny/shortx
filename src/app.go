@@ -2,6 +2,7 @@ package main
 
 import (
 	"app/controllers"
+	"configs"
 	"log"
 	"net/http"
 
@@ -22,5 +23,5 @@ func main() {
 	router.HandleFunc("/api/short-url", UrlsController.Index).Methods("POST")
 
 	// serve...
-	log.Fatal(http.ListenAndServe(":8000", router))
+	log.Fatal(http.ListenAndServe(":"+configs.APP_RUNNING_PORT, router))
 }
