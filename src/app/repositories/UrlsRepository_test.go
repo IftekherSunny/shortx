@@ -57,8 +57,8 @@ func Test_Get_Long_Urls_Throws_Error_If_Provided_Data_Will_Invalid(t *testing.T)
 
 	body := ioutil.NopCloser(bytes.NewReader([]byte(data)))
 
-	// act
 	urlsRepository := UrlsRepository{}
 
+	// act
 	urlsRepository.GetLongUrls(body)
 }
