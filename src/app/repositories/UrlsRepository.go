@@ -37,14 +37,10 @@ func (urlsRepository *UrlsRepository) GenerateShortUrls(Urls map[string]string, 
 	db := DbRepository{}.init()
 
 	for longUrl, _ := range Urls {
-		// channels
-		shortUrlExist := make(chan bool)
-		shortUrl := make(chan string)
+		shortUrlExist, shortUrl := urlsRepository.shortUrlExist(db, longUrl)
 
-		go urlsRepository.shortUrlExist(db, longUrl, shortUrlExist, shortUrl)
-
-		if <-shortUrlExist {
-			Urls[longUrl] = "http://" + request.Host + "/" + <-shortUrl
+		if shortUrlExist {
+			Urls[longUrl] = "http://" + request.Host + "/" + shortUrl
 		} else {
 			Urls[longUrl] = "http://" + request.Host + "/" + urlsRepository.generateShortUrl(db, longUrl)
 		}
@@ -70,17 +66,15 @@ func (urlsRepository *UrlsRepository) generateShortUrl(db *gorm.DB, longUrl stri
 }
 
 // Determine short url existence
-func (urlsRepository *UrlsRepository) shortUrlExist(db *gorm.DB, longUrl string, shortUrlExist chan bool, shortUrl chan string) {
+func (urlsRepository *UrlsRepository) shortUrlExist(db *gorm.DB, longUrl string) (bool, string) {
 	var url models.Url
 	query := db.Where("long_url = ?", longUrl).First(&url)
 
 	if query.Error == nil {
-		shortUrlExist <- true
-		shortUrl <- url.ShortUrl
+		return true, url.ShortUrl
 	}
 
-	shortUrlExist <- false
-	shortUrl <- ""
+	return false, ""
 }
 
 // Get long url from the given short url
