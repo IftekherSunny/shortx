@@ -63,8 +63,8 @@ func (urlsRepository *UrlsRepository) GenerateShortUrls(Urls map[string]string, 
 		session.Close()
 		return urlsRepository.receiveData(urls), true
 
-		// if all goroutines did not complete within 30 seconds
-		// send a request timeout message to the client
+	// if all goroutines did not complete within 30 seconds
+	// send a request timeout message to the client
 	case <-time.After(time.Second * 30):
 		session.Close()
 		return map[string]string{"message": "Request timeout"}, false
@@ -90,6 +90,7 @@ func (urlsRepository *UrlsRepository) receiveData(urls chan map[string]string) m
 func (urlsRepository *UrlsRepository) sendShortUrl(
 	db *mgo.Database, request *http.Request, urls chan map[string]string, longUrl string,
 	shortUrlExist chan bool, shortUrl chan string, done chan bool) {
+	
 	if <-shortUrlExist {
 		urls <- map[string]string{longUrl: "http://" + request.Host + "/" + <-shortUrl}
 	} else {
