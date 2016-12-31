@@ -1,24 +1,22 @@
 ## Shortx
 
-#### Installation Process
+#### Installation
 
-Download shortx, then goto src directury from your terminal and enter the command given below to install all dependencies.
-
-```
-go get .
-```
-
-You can also run shortx from binary file. Enter the command given below to run shortx
+make sure that Go is installed on your computer. Type the following command in your terminal:
 
 ```
-./bin/app
+go get github.com/iftekhersunny/shortx
 ```
 
-App will run http://localhost:8888
+#### Start Shortx App
 
-#### Shortx Configuration
+Type the following command in your terminal:
 
-Setup your database username, password, database name or other app related configuration store in the database.go and app.go files. Both files store in the src/configs directory.
+```
+$GOPATH/src/github.com/iftekhersunny/shortx/bin/shortx
+```
+
+Shortx app will start on http://localhost:8888
 
 #### License
 This package is licensed under the [MIT License](https://github.com/iftekhersunny/shortx/blob/master/LICENSE)
