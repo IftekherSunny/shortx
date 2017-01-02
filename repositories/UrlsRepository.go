@@ -90,7 +90,6 @@ func (urlsRepository *UrlsRepository) receiveData(urls chan map[string]string) m
 func (urlsRepository *UrlsRepository) sendShortUrl(
 	db *mgo.Database, request *http.Request, urls chan map[string]string, longUrl string,
 	shortUrlExist chan bool, shortUrl chan string, done chan bool) {
-	
 	if <-shortUrlExist {
 		urls <- map[string]string{longUrl: "http://" + request.Host + "/" + <-shortUrl}
 	} else {
